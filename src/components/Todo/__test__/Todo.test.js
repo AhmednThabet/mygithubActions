@@ -1,39 +1,59 @@
 
-import { screen, render , fireEvent } from "@testing-library/react"; 
-import Todo from "../Todo";  
-import { BrowserRouter } from "react-router-dom/cjs/react-router-dom.min";
+import { render, screen, fireEvent } from '@testing-library/react';
+import Todo from "../Todo"
+import { BrowserRouter } from "react-router-dom"
 
-const MocTodo = () => {
+const MockTodo = () => {
     return (
         <BrowserRouter>
-        <Todo />
+          <Todo/>
         </BrowserRouter>
     )
-} 
-
-const addTask = (tasks) => {
-     const inputElement = screen.getByPlaceholderText(/Add a new task here.../i)  
-    const buttonElement = screen.getByRole("button", { name: "Add" }) 
-    return tasks.forEach(task => {
-    fireEvent.change(inputElement, { target: { value:task } }) 
-    fireEvent.click(buttonElement) 
-    });
 }
 
-it('should Input value reflect on the list ', () => {
-    render(<MocTodo/>); 
-   addTask(['hi there'])
-    const divElement = screen.getByText(/hi there/i) 
-    expect(divElement).toBeInTheDocument();
-}) 
+const addTask = (tasks) => {
+    const inputElement = screen.getByPlaceholderText(/Add a new task here.../i);
+    const buttonElement = screen.getByRole("button", { name: /Add/i} );
+    tasks.forEach((task) => {
+        fireEvent.change(inputElement, { target: { value: task } });
+        fireEvent.click(buttonElement);
+    })
+}
 
-// test that you can add multiple todos
+it('should be able to type into input', () => {
+    render(
+        <MockTodo />
+    );
+    addTask(["Go Grocery Shopping"])
+    const divElement = screen.getByText(/Go Grocery Shopping/i);
+    expect(divElement).toBeInTheDocument()
+});
 
+it('should render multiple items', () => {
+    render(
+        <MockTodo />
+    );
+    addTask(["Go Grocery Shopping", "Go Grocery Shopping", "Go Grocery Shopping"])
+    const divElements = screen.queryAllByText(/Go Grocery Shopping/i);
+    expect(divElements.length).toBe(3)
+});
 
-it('should multiple  Input values reflect on the list ', () => {
-    render(<MocTodo/>); 
-    addTask(['hi there', 'ahmed', 'nasser', 'thabet']);
-    const divElements = screen.getAllByTestId("task-container");  
-    screen.debug();
-    expect(divElements.length).toBe(4);
-}) 
+it('task should not have complete class when initally rendered', () => {
+    render(
+        <MockTodo />
+    );
+    addTask(["Go Grocery Shopping"])
+    const divElement = screen.getByText(/Go Grocery Shopping/i);
+    expect(divElement).not.toHaveClass("todo-item-active")
+});
+
+it('task should have complete class when clicked', () => {
+    render(
+        <MockTodo />
+    );
+    addTask(["Go Grocery Shopping"])
+    const divElement = screen.getByText(/Go Grocery Shopping/i);
+    fireEvent.click(divElement)
+    expect(divElement).toHaveClass("todo-item-active")
+});
+

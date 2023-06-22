@@ -1,33 +1,60 @@
-import { screen, render , fireEvent } from "@testing-library/react"; 
-import AddInput from "../AddInput";  
+import { render, screen, fireEvent } from '@testing-library/react';
+import AddInput from "../AddInput"
 
+const mockedSetTodo = jest.fn();
 
-// this function do nothing because we dont care about how state update 
-const mockSetTodos = jest.fn();
+describe("AddInput", () => {
+    it('should render input element', () => {
+        render(
+            <AddInput 
+                todos={[]}
+                setTodos={mockedSetTodo}
+            />
+        );
+        const inputElement = screen.getByPlaceholderText(/Add a new task here.../i);
+        expect(inputElement).toBeInTheDocument();
+    });
+    
+    it('should be able to type into input', () => {
+        render(
+            <AddInput 
+                todos={[]}
+                setTodos={mockedSetTodo}
+            />
+        );
+        const inputElement = screen.getByPlaceholderText(/Add a new task here.../i);
+        fireEvent.click(inputElement)
+        fireEvent.change(inputElement, { target: { value: "Go Grocery Shopping" } })
+        expect(inputElement.value).toBe("Go Grocery Shopping");
+    });
+    
+    it('should be able to type into input', () => {
+        render(
+            <AddInput 
+                todos={[]}
+                setTodos={mockedSetTodo}
+            />
+        );
+        const inputElement = screen.getByPlaceholderText(/Add a new task here.../i);
+        fireEvent.click(inputElement)
+        fireEvent.change(inputElement, { target: { value: "Go Grocery Shopping" } });
+        const buttonElement = screen.getByRole("button", { name: /Add/i});
+        fireEvent.click(buttonElement)
+        expect(mockedSetTodo).toBeCalled()
+    });
+    
+    it('should have empty input when add button is cliked', () => {
+        render(
+            <AddInput 
+                todos={[]}
+                setTodos={mockedSetTodo}
+            />
+        );
+        const inputElement = screen.getByPlaceholderText(/Add a new task here.../i);
+        fireEvent.change(inputElement, { target: { value: "Go Grocery Shopping" } });
+        const buttonElement = screen.getByRole("button", { name: /Add/i});
+        fireEvent.click(buttonElement)
+        expect(inputElement.value).toBe("")
+    });
 
-it('should Input exist on the doucument ', () => {
-    render(<AddInput todos={[]} setTodos={mockSetTodos} />); 
-    const inputElement = screen.getByPlaceholderText(/Add a new task here.../i) 
-    expect(inputElement).toBeInTheDocument();
-})
-
-// write a test to see if you can type in the input (hint=> we need to trigger an event)
-
-it('should Input change the value when the user type ', () => {
-    render(<AddInput todos={[]} setTodos={mockSetTodos} />); 
-    const inputElement = screen.getByPlaceholderText(/Add a new task here.../i)  
-    fireEvent.change(inputElement , {target:{value:"hi there"}})
-    expect(inputElement.value).toBe("hi there");
-})
-
-// lets test when add button clicked the input will return to notheing --empty
-
-
-it('should Input be empty when add button is cliced  ', () => {
-    render(<AddInput todos={[]} setTodos={mockSetTodos} />); 
-    const inputElement = screen.getByPlaceholderText(/Add a new task here.../i)  
-    const buttonElement = screen.getByRole("button" , {name:"Add"})
-    fireEvent.change(inputElement, { target: { value: "hi there" } }) 
-    fireEvent.click(buttonElement)
-    expect(inputElement.value).toBe("");
 })
