@@ -1,3 +1,4 @@
+
 import { render, screen, fireEvent } from '@testing-library/react';
 import Todo from "../Todo"
 import { BrowserRouter } from "react-router-dom"
@@ -55,3 +56,4 @@ it('task should have complete class when clicked', () => {
     fireEvent.click(divElement)
     expect(divElement).toHaveClass("todo-item-active")
 });
+

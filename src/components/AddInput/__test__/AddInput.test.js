@@ -56,4 +56,5 @@ describe("AddInput", () => {
         fireEvent.click(buttonElement)
         expect(inputElement.value).toBe("")
     });
+
 })
